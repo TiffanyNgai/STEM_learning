@@ -1,4 +1,4 @@
-# Authoring guide — Lumen lessons
+# Authoring guide — aha lessons
 
 Everything a content author needs. Types live in `src/content/types.ts`.
 

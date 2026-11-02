@@ -1,5 +1,5 @@
 {
-  "name": "lumen-push-worker",
+  "name": "aha-push-worker",
   "private": true,
   "type": "module",
   "scripts": {

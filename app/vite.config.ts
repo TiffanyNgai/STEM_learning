@@ -14,8 +14,8 @@ export default defineConfig({
       injectManifest: { maximumFileSizeToCacheInBytes: 8 * 1024 * 1024 },
       includeAssets: ['icon.svg', 'apple-touch-icon.png'],
       manifest: {
-        name: 'Lumen — Science Lessons',
-        short_name: 'Lumen',
+        name: 'aha — Science Lessons',
+        short_name: 'aha',
         description: 'Bite-sized, animated university science lessons.',
         theme_color: '#58cc02',
         background_color: '#ffffff',

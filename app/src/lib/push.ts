@@ -16,14 +16,16 @@ function b64ToBytes(b64: string) {
 
 const clientId = () => {
   try {
-    let id = localStorage.getItem('lumen-client-id');
-    if (!id) { id = crypto.randomUUID(); localStorage.setItem('lumen-client-id', id); }
+    // Reuse the id from the app's old name (Lumen) so existing reminder subscriptions keep working.
+    let id = localStorage.getItem('aha-client-id') ?? localStorage.getItem('lumen-client-id');
+    if (!id) id = crypto.randomUUID();
+    localStorage.setItem('aha-client-id', id);
     return id;
   } catch { return 'anon'; }
 };
 
 export async function enablePush(reminderHour: number): Promise<{ ok: boolean; reason?: string }> {
-  if (!pushSupported()) return { ok: false, reason: isIOS() && !isStandalone() ? 'On iPhone, first add Lumen to your Home Screen, then open it from there.' : 'This browser does not support push notifications.' };
+  if (!pushSupported()) return { ok: false, reason: isIOS() && !isStandalone() ? 'On iPhone, first add aha to your Home Screen, then open it from there.' : 'This browser does not support push notifications.' };
   if (!pushConfigured()) return { ok: false, reason: 'Push server not configured for this build (see README). In-app reminders will still show.' };
   const perm = await Notification.requestPermission();
   if (perm !== 'granted') return { ok: false, reason: 'Notification permission was not granted.' };

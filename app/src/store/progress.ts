@@ -3,6 +3,12 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import type { LessonRef } from '../content/types';
 
 export const MAX_HEARTS = 5;
+
+// The app used to be called Lumen; carry saved progress over to the new storage key once.
+try {
+  const old = localStorage.getItem('lumen-progress');
+  if (old && !localStorage.getItem('aha-progress')) localStorage.setItem('aha-progress', old);
+} catch { /* storage unavailable */ }
 const HEART_REFILL_MS = 30 * 60 * 1000;
 
 export interface LessonRecord { crowns: number; best: number; lastAt: number }
@@ -121,7 +127,7 @@ export const useProgress = create<State & Actions>()(
       reset: () => set({ ...initial, heartsUpdatedAt: Date.now() }),
     }),
     {
-      name: 'lumen-progress',
+      name: 'aha-progress',
       version: 1,
       storage: createJSONStorage(() => {
         try { localStorage.setItem('__t', '1'); localStorage.removeItem('__t'); return localStorage; }
