@@ -25,7 +25,7 @@ const clientId = () => {
 };
 
 export async function enablePush(reminderHour: number): Promise<{ ok: boolean; reason?: string }> {
-  if (!pushSupported()) return { ok: false, reason: isIOS() && !isStandalone() ? 'On iPhone, first add aha to your Home Screen, then open it from there.' : 'This browser does not support push notifications.' };
+  if (!pushSupported()) return { ok: false, reason: isIOS() && !isStandalone() ? 'On iPhone, first add AHA! to your Home Screen, then open it from there.' : 'This browser does not support push notifications.' };
   if (!pushConfigured()) return { ok: false, reason: 'Push server not configured for this build (see README). In-app reminders will still show.' };
   const perm = await Notification.requestPermission();
   if (perm !== 'granted') return { ok: false, reason: 'Notification permission was not granted.' };

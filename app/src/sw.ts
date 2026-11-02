@@ -12,7 +12,7 @@ precacheAndRoute(self.__WB_MANIFEST);
 self.addEventListener('push', (event) => {
   let data: { title?: string; body?: string; url?: string } = {};
   try { data = event.data?.json() ?? {}; } catch { data = { body: event.data?.text() }; }
-  event.waitUntil(self.registration.showNotification(data.title ?? 'aha', {
+  event.waitUntil(self.registration.showNotification(data.title ?? 'AHA!', {
     body: data.body ?? 'Time for a quick lesson — keep your streak alive! 🔥',
     icon: 'icon-192.png',
     badge: 'icon-192.png',

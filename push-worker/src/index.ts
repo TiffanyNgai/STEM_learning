@@ -59,7 +59,7 @@ const MESSAGES = [
 
 async function send(env: Env, rec: Record) {
   const message = {
-    data: JSON.stringify({ title: 'aha', body: MESSAGES[Math.floor(Math.random() * MESSAGES.length)](rec.streak ?? 0), url: './' }),
+    data: JSON.stringify({ title: 'AHA!', body: MESSAGES[Math.floor(Math.random() * MESSAGES.length)](rec.streak ?? 0), url: './' }),
     options: { ttl: 6 * 3600, urgency: 'normal' as const, topic: 'reminder' },
   };
   const vapid = { subject: env.VAPID_SUBJECT, publicKey: env.VAPID_PUBLIC_KEY, privateKey: env.VAPID_PRIVATE_KEY };
@@ -70,7 +70,7 @@ async function send(env: Env, rec: Record) {
 export default {
   async fetch(req: Request, env: Env): Promise<Response> {
     if (req.method === 'OPTIONS') return new Response(null, { headers: cors(env) });
-    if (req.method !== 'POST') return new Response('aha push worker', { headers: cors(env) });
+    if (req.method !== 'POST') return new Response('AHA! push worker', { headers: cors(env) });
     const url = new URL(req.url);
     let body: any;
     try {

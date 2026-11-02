@@ -1,9 +1,13 @@
-# aha — a Duolingo-style science app
+# AHA! — a Duolingo-style science app
 
-*aha* is named for the moment a concept clicks. Bite-sized, animated lessons across 10 subjects: Mathematics,
+**AHA!** is named for the moment a concept clicks. Bite-sized, animated lessons across 10 subjects: Mathematics,
 Statistics, Physics, Chemistry, Biology, Machine Learning, Pharmacy & Medicine, Quantum Mechanics & Computing,
 Computer Science and Computational Drug Discovery. Installable as a PWA (Add to Home Screen), works offline,
 daily streak reminders over Web Push.
+
+Naming: users see **AHA!**; technical identifiers that can't hold "!" use lowercase `aha` (storage keys,
+the `aha-push` worker, package names). The app was first called Lumen; old `lumen-*` storage keys are
+migrated automatically.
 
 - **Live app:** https://tiffanyngai.github.io/STEM_learning/
 - **Push worker:** https://aha-push.tiffanyngai817.workers.dev
@@ -100,7 +104,7 @@ Logs from the live worker: `cd push-worker && npx wrangler tail`.
   `VITE_VAPID_PUBLIC_KEY`, rerun the workflow; users then need to toggle reminders off and on.
 
 ## Install on a phone
-- **iPhone (iOS 16.4+)**: open the live URL in Safari → Share → *Add to Home Screen*. Open aha from the home
+- **iPhone (iOS 16.4+)**: open the live URL in Safari → Share → *Add to Home Screen*. Open AHA! from the home
   screen, then Profile → turn on *Streak reminders*.
 - **Android**: Chrome → ⋮ → *Install app*.
 

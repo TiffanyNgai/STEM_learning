@@ -19,7 +19,7 @@ export default function Home() {
   const showInstall = !isStandalone() && !s.seenInstallTip;
   return (
     <>
-      <TopBar title="aha" />
+      <TopBar title="AHA!" />
       <main className="page">
         <div className="card goal-card">
           <div className="ring" style={{ ['--p' as any]: pct }}><span>{pct}%</span></div>
@@ -30,7 +30,7 @@ export default function Home() {
         </div>
         {showInstall && (
           <div className="banner" style={{ marginTop: 12 }}>
-            <strong>📲 Install aha</strong><br />
+            <strong>📲 Install AHA!</strong><br />
             {isIOS()
               ? <>In Safari tap <b>Share</b> → <b>Add to Home Screen</b>. Open it from your home screen to enable streak reminders.</>
               : <>Use your browser menu → <b>Install app</b> / <b>Add to Home screen</b> for offline lessons and reminders.</>}

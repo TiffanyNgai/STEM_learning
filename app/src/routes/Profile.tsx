@@ -75,7 +75,7 @@ export default function Profile() {
           <button className="btn small secondary" onClick={() => file.current?.click()}>⬆ Import</button>
           <button className="btn small danger" onClick={() => { if (confirm('Reset all progress on this device?')) s.reset(); }}>Reset</button></div>
         <input ref={file} type="file" accept="application/json" hidden onChange={async (e) => {
-          const f = e.target.files?.[0]; if (!f) return; setMsg(s.importState(await f.text()) ? 'Progress imported.' : 'That file is not an aha backup.');
+          const f = e.target.files?.[0]; if (!f) return; setMsg(s.importState(await f.text()) ? 'Progress imported.' : 'That file is not an AHA! backup.');
         }} />
         <p className="muted" style={{ fontSize: 12, marginTop: 24 }}>{subjects.length} subjects · Medical content is study material, not medical advice.</p>
       </main>
