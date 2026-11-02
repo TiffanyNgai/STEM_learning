@@ -10,7 +10,7 @@ export type Rich = string;
 
 export type SubjectId =
   | 'math' | 'stats' | 'physics' | 'chem' | 'bio'
-  | 'ml' | 'med' | 'quantum' | 'cs' | 'drug';
+  | 'ml' | 'med' | 'quantum' | 'cs' | 'drug' | 'robotics';
 
 /** Global lesson reference: "subject/lessonId", e.g. "chem/nmr-basics". */
 export type LessonRef = `${SubjectId}/${string}`;

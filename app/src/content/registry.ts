@@ -3,7 +3,7 @@ import type { LessonContent, LessonMeta, LessonRef, Subject, SubjectId, Unit } f
 const subjectModules = import.meta.glob<{ default: Subject }>('./*/index.ts', { eager: true });
 const lessonLoaders = import.meta.glob<{ default: LessonContent }>('./*/lessons/*.ts');
 
-export const SUBJECT_ORDER: SubjectId[] = ['math', 'stats', 'physics', 'chem', 'bio', 'ml', 'med', 'quantum', 'cs', 'drug'];
+export const SUBJECT_ORDER: SubjectId[] = ['math', 'stats', 'physics', 'chem', 'bio', 'ml', 'robotics', 'med', 'quantum', 'cs', 'drug'];
 
 export const subjects: Subject[] = SUBJECT_ORDER
   .map((id) => subjectModules[`./${id}/index.ts`]?.default)

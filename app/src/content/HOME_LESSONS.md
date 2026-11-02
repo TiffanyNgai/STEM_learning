@@ -66,3 +66,11 @@ adme-tox, molecular-representations, fingerprints-similarity, drug-likeness, qsa
 force-fields, molecular-dynamics, docking, free-energy-methods, qm-mm, protein-structure-prediction,
 alphafold, protein-language-models, molecular-property-prediction, generative-molecular-design,
 protein-design, retrosynthesis, quantum-computing-drug-discovery
+
+## robotics
+what-is-a-robot, degrees-of-freedom, rotation-matrices, quaternions, homogeneous-transforms, twists-screws,
+forward-kinematics, dh-parameters, inverse-kinematics, jacobians, singularities, lagrangian-robot-dynamics,
+feedback-intro, pid-control, lqr, mpc, lyapunov-stability, bayes-filter, kalman-filter, extended-kalman-filter,
+particle-filter, slam, pose-graph-slam, pinhole-camera-model, multi-view-geometry, point-clouds-icp,
+planning-problem, prm, motion-planning-rrt, trajectory-optimization, grasping-closure, behavior-cloning,
+sim-to-real, diffusion-policy, vision-language-action-models, safe-control-cbf

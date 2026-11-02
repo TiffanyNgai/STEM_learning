@@ -114,7 +114,7 @@ Independence is an assumption about the world (or a design choice, like randomiz
     {
       kind: 'fill',
       prompt: "Complete Bayes' rule:  P(A | B) = P( ___ | A) · P(A) / P( ___ )",
-      bank: ['B', 'A', 'A ∩ B', 'Ω'],
+      bank: ['B', 'B', 'A', 'A ∩ B', 'Ω'],
       answer: ['B', 'B'],
       why: 'P(A|B) = P(B|A)P(A)/P(B). The conditioning flips (B given A on top), and we divide by the probability of what we observed, B.',
     },

@@ -77,6 +77,11 @@ describe('lessons', () => {
             const blanks = c.prompt.split('___').length - 1;
             expect(blanks, `${where}: blanks vs answers`).toBe(c.answer.length);
             c.answer.forEach((a) => expect(c.bank.includes(a), `${where}: answer ${a} not in bank`).toBe(true));
+            // Each bank chip can be placed once, so a word used in several blanks needs that many copies.
+            for (const a of new Set(c.answer)) {
+              const need = c.answer.filter((x) => x === a).length;
+              expect(c.bank.filter((x) => x === a).length, `${where}: bank needs ${need}× "${a}"`).toBeGreaterThanOrEqual(need);
+            }
             break;
           }
           case 'order': expect(c.steps.length, where).toBeGreaterThanOrEqual(3); break;
