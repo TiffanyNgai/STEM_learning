@@ -33,7 +33,7 @@ You only need high-school algebra and a little calculus. Every symbol is introdu
       ],
       references: [
         { authors: 'D. J. Velleman', title: 'How to Prove It: A Structured Approach', year: 2019, venue: '3rd ed., Cambridge University Press', detail: 'Ch. 1–4, 6–8' },
-        { authors: 'R. Hammack', title: 'Book of Proof', year: 2018, venue: '3rd ed., self-published (free online)', url: 'https://www.people.vcu.edu/~rhammack/BookOfProof/' },
+        { authors: 'R. Hammack', title: 'Book of Proof', year: 2018, venue: '3rd ed., self-published (free online)', url: 'https://richardhammack.github.io/BookOfProof/' },
       ],
     },
     {

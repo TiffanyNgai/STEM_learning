@@ -173,6 +173,6 @@ Next: groups *doing* things to sets — [group actions](@math/group-actions).`,
   references: [
     { authors: 'D. S. Dummit, R. M. Foote', title: 'Abstract Algebra', year: 2004, venue: '3rd ed., Wiley', detail: '§2.1–2.3, §3.2 (cosets, Lagrange)' },
     { authors: 'M. Artin', title: 'Algebra', year: 2011, venue: '2nd ed., Pearson', detail: 'Ch. 2 (subgroups, cosets, Lagrange)' },
-    { authors: 'R. Hammack', title: 'Book of Proof', year: 2018, venue: '3rd ed. (free online)', detail: 'Ch. 11 (equivalence relations, partitions)', url: 'https://www.people.vcu.edu/~rhammack/BookOfProof/' },
+    { authors: 'R. Hammack', title: 'Book of Proof', year: 2018, venue: '3rd ed. (free online)', detail: 'Ch. 11 (equivalence relations, partitions)', url: 'https://richardhammack.github.io/BookOfProof/' },
   ],
 } satisfies LessonContent;
