@@ -1,0 +1,19 @@
+name = "lumen-push"
+main = "src/index.ts"
+compatibility_date = "2024-10-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Hourly: send reminders to learners whose local reminder hour is now.
+[triggers]
+crons = ["0 * * * *"]
+
+# Create with: npx wrangler kv namespace create SUBS   → paste the id below
+[[kv_namespaces]]
+binding = "SUBS"
+id = "12d7ceaf378142fa9d577bd2caa03358"
+
+[vars]
+# Origin of your hosted app, for CORS (e.g. https://you.github.io)
+ALLOWED_ORIGIN = "https://tiffanyngai.github.io"
+VAPID_SUBJECT = "mailto:tngai@uwaterloo.ca"
+# Secrets (set with `npx wrangler secret put NAME`): VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY
