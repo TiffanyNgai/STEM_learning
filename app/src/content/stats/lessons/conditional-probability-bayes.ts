@@ -128,7 +128,7 @@ Independence is an assumption about the world (or a design choice, like randomiz
         'If $A, B$ are independent then $P(A\\mid B) = P(A)$',
       ],
       answers: [1, 3],
-      why: 'Given B, either A or not-A happens, so those add to 1. Swapping the conditioning (choice 1) is the "prosecutor\'s fallacy". Choice 3 mixes two different universes (B and not-B), so there is no reason they sum to 1.',
+      why: 'Given B, either A or not-A happens, so those add to 1. Swapping the conditioning, $P(A\\mid B) = P(B\\mid A)$, is the "prosecutor\'s fallacy". $P(A\\mid B) + P(A\\mid B^c) = 1$ mixes two different universes (B and not-B), so there is no reason they sum to 1.',
     },
     {
       kind: 'numeric',

@@ -14,17 +14,18 @@ function shuffle<T>(arr: T[], seed: number): T[] {
 }
 const LETTERS = 'ABCDEFGH';
 
-function Choices({ choices, selected, toggle, locked, correct }: { choices: string[]; selected: number[]; toggle: (i: number) => void; locked: boolean; correct: number[] }) {
+/** Indices are always the author's original choice indices; `order` only changes where each is shown. */
+function Choices({ choices, order, selected, toggle, locked, correct }: { choices: string[]; order?: number[]; selected: number[]; toggle: (i: number) => void; locked: boolean; correct: number[] }) {
   return (
     <div className="choices">
-      {choices.map((c, i) => {
+      {(order ?? choices.map((_, i) => i)).map((i, pos) => {
         const cls = ['choice'];
         if (selected.includes(i)) cls.push('selected');
         if (locked && correct.includes(i)) cls.push('right');
         else if (locked && selected.includes(i)) cls.push('bad');
         return (
           <button key={i} className={cls.join(' ')} disabled={locked} onClick={() => toggle(i)}>
-            <span className="key">{LETTERS[i]}</span><Rich text={c} />
+            <span className="key">{LETTERS[pos]}</span><Rich text={choices[i]} />
           </button>
         );
       })}
@@ -32,18 +33,23 @@ function Choices({ choices, selected, toggle, locked, correct }: { choices: stri
   );
 }
 
-function Mcq({ card, locked, onReady }: ExProps<Extract<Exercise, { kind: 'mcq' }>>) {
+// Shuffled so the right answer's position carries no information.
+const useChoiceOrder = (n: number, seed: number) => useMemo(() => shuffle([...Array(n).keys()], seed + 7), [n, seed]);
+
+function Mcq({ card, locked, onReady, seed }: ExProps<Extract<Exercise, { kind: 'mcq' }>>) {
   const [sel, setSel] = useState<number | null>(null);
-  return <Choices choices={card.choices} selected={sel === null ? [] : [sel]} locked={locked} correct={[card.answer]}
+  const order = useChoiceOrder(card.choices.length, seed);
+  return <Choices choices={card.choices} order={order} selected={sel === null ? [] : [sel]} locked={locked} correct={[card.answer]}
     toggle={(i) => { setSel(i); onReady(() => i === card.answer); }} />;
 }
 
-function Multi({ card, locked, onReady }: ExProps<Extract<Exercise, { kind: 'multi' }>>) {
+function Multi({ card, locked, onReady, seed }: ExProps<Extract<Exercise, { kind: 'multi' }>>) {
   const [sel, setSel] = useState<number[]>([]);
+  const order = useChoiceOrder(card.choices.length, seed);
   return (
     <>
       <div className="muted" style={{ fontSize: 14, marginBottom: 8 }}>Select all that apply.</div>
-      <Choices choices={card.choices} selected={sel} locked={locked} correct={card.answers}
+      <Choices choices={card.choices} order={order} selected={sel} locked={locked} correct={card.answers}
         toggle={(i) => {
           const next = sel.includes(i) ? sel.filter((x) => x !== i) : [...sel, i];
           setSel(next);

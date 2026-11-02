@@ -103,7 +103,7 @@ Lift each point to $\boldsymbol\phi(x)=(x,x^2)$. In the new 2D feature space the
         String.raw`$\mathbf a=(0,-1),\ b=1$`,
       ],
       answer: 1,
-      why: String.raw`$(0,1)\cdot(x,x^2)-1=x^2-1>0\iff|x|>1$. Option 1 gives $x>1$ (it misses $x<-1$); option 4 is the exact opposite rule ($|x|<1$).`,
+      why: String.raw`$(0,1)\cdot(x,x^2)-1=x^2-1>0\iff|x|>1$. $\mathbf a=(1,0),\ b=-1$ gives $x>1$ (it misses $x<-1$); $\mathbf a=(0,-1),\ b=1$ is the exact opposite rule ($|x|<1$).`,
     },
     {
       kind: 'explain',

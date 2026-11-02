@@ -69,7 +69,7 @@ Think of an atom as a hotel. Floors are **shells** ($n$), each floor has room ty
       kind: 'mcq', prompt: 'Which 2p box diagram is correct for ground-state nitrogen (1s² 2s² 2p³)?',
       choices: ['[↑↓] [↑ ] [  ]', '[↑ ] [↑ ] [↑ ]', '[↑ ] [↓ ] [↑ ]', '[↑↓] [↑↓] [↑ ]'],
       answer: 1,
-      why: 'Hund’s rule: three equal-energy 2p orbitals each get one electron, all with parallel spin. Pairing early or mixing spin directions gives a higher-energy (excited) arrangement; the last choice has 5 electrons, not 3.',
+      why: 'Hund’s rule: three equal-energy 2p orbitals each get one electron, all with parallel spin. Pairing early or mixing spin directions gives a higher-energy (excited) arrangement; [↑↓] [↑↓] [↑ ] has 5 electrons, not 3.',
     },
     {
       kind: 'explain', title: 'The filling order',
@@ -122,7 +122,7 @@ Elements in the same **group** (column) share the same valence configuration: Li
       kind: 'mcq', prompt: String.raw`What is the electron configuration of $\text{Fe}^{3+}$?`,
       choices: [String.raw`$[\text{Ar}]\,4s^2\,3d^3$`, String.raw`$[\text{Ar}]\,3d^5$`, String.raw`$[\text{Ar}]\,4s^1\,3d^4$`, String.raw`$[\text{Ar}]\,3d^6$`],
       answer: 1,
-      why: 'Fe is [Ar] 4s² 3d⁶. Remove the two 4s electrons first, then one 3d: [Ar] 3d⁵. Taking all three from 3d (the first choice) is the common mistake.',
+      why: 'Fe is [Ar] 4s² 3d⁶. Remove the two 4s electrons first, then one 3d: [Ar] 3d⁵. Taking all three from 3d, leaving [Ar] 4s² 3d³, is the common mistake.',
     },
     {
       kind: 'match', prompt: 'Match each element to its valence configuration.',

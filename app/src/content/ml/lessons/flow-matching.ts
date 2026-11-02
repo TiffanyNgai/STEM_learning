@@ -150,7 +150,7 @@ So a velocity model and a score model carry the same information. Choosing $\alp
         'Straight conditional paths tend to give straighter learned flows, needing fewer sampling steps.',
       ],
       answers: [0, 1, 3],
-      why: 'Training is just regression on cheaply sampled (x_t, target) pairs. Sampling still requires integrating the ODE (C is false) — but the straighter the flow, the fewer steps; one-step generation needs extra ideas such as reflow or consistency distillation.',
+      why: 'Training is just regression on cheaply sampled (x_t, target) pairs. Sampling still requires integrating the ODE, so it does not eliminate the ODE solver — but the straighter the flow, the fewer steps; one-step generation needs extra ideas such as reflow or consistency distillation.',
     },
     {
       kind: 'explain',

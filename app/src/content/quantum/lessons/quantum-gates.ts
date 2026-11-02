@@ -45,7 +45,7 @@ On the Bloch sphere each is a half-turn about its own axis. Each is its own inve
       prompt: String.raw`What is $Z\,(0.6|0\rangle + 0.8|1\rangle)$?`,
       choices: [String.raw`$0.8|0\rangle + 0.6|1\rangle$`, String.raw`$0.6|0\rangle - 0.8|1\rangle$`, String.raw`$-0.6|0\rangle + 0.8|1\rangle$`, String.raw`$0.6|0\rangle + 0.8|1\rangle$`],
       answer: 1,
-      why: String.raw`Z multiplies the $|1\rangle$ amplitude by $-1$ and leaves $|0\rangle$ untouched. Swapping amplitudes would be X. Option 3 differs from the answer only by a global phase $-1$, so it is physically the same state — but it is not what the matrix multiplication literally gives.`,
+      why: String.raw`Z multiplies the $|1\rangle$ amplitude by $-1$ and leaves $|0\rangle$ untouched. Swapping amplitudes would be X. $-0.6|0\rangle + 0.8|1\rangle$ differs from the answer only by a global phase $-1$, so it is physically the same state — but it is not what the matrix multiplication literally gives.`,
     },
     {
       kind: 'explain',

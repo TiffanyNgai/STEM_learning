@@ -65,6 +65,11 @@ describe('lessons', () => {
         }
         for (const t of richOf(c)) for (const l of linksIn(t)) expect(refs.has(l as LessonRef), `${where}: bad link ${l}`).toBe(true);
         if ('why' in c) expect(c.why.length, where).toBeGreaterThan(10);
+        // MCQ/multi choices are shuffled on screen, so explanations must name a choice by its content.
+        if (c.kind === 'mcq' || c.kind === 'multi') {
+          expect(c.why, `${where}: why refers to a choice by position`).not.toMatch(
+            /\b(choices?|options?)\s+\(?[1-8A-H]\)?(?![\w'])|\b(first|second|third|fourth|last) (option|choice)\b|\(([A-D])\)\s+(is|was)\b|\b[A-D] (is|are) (wrong|correct|right|false|true)\b/i);
+        }
         switch (c.kind) {
           case 'mcq': expect(c.answer, where).toBeGreaterThanOrEqual(0); expect(c.answer, where).toBeLessThan(c.choices.length); break;
           case 'multi': expect(c.answers.length, where).toBeGreaterThan(0); c.answers.forEach((a) => expect(a < c.choices.length, where).toBe(true)); break;

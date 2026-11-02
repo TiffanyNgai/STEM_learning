@@ -181,7 +181,7 @@ Experimentally, a high **fragment-screening hit rate** is a good sign of druggab
         'A compound that kills cancer cells but whose target is unknown',
       ],
       answer: 2,
-      why: 'Probe criteria (Arrowsmith et al. 2015) ask for potency below ~100 nM, >30-fold selectivity within the family and on-target cell activity at ≤1 µM. Only option 3 meets all three. A poorly selective "probe" can validate the wrong target, which is a common source of irreproducible biology.',
+      why: 'Probe criteria (Arrowsmith et al. 2015) ask for potency below ~100 nM, >30-fold selectivity within the family and on-target cell activity at ≤1 µM. Only the 30 nM compound that is >100-fold selective and active in cells at 300 nM meets all three. A poorly selective "probe" can validate the wrong target, which is a common source of irreproducible biology.',
     },
     {
       kind: 'order',

@@ -39,7 +39,7 @@ $$\text{product} \iff ad - bc = 0.$$
         String.raw`$|11\rangle$`,
       ],
       answer: 2,
-      why: String.raw`For option 3, $a = d = 0$ and $bc = -\tfrac12$, so $ad - bc = \tfrac12 \ne 0$. The others factorise: $|0\rangle|+\rangle$, $|+\rangle|+\rangle$ and $|1\rangle|1\rangle$. A superposition of several terms is not automatically entangled.`,
+      why: String.raw`For $\tfrac{1}{\sqrt2}(|01\rangle - |10\rangle)$, $a = d = 0$ and $bc = -\tfrac12$, so $ad - bc = \tfrac12 \ne 0$. The others factorise: $|0\rangle|+\rangle$, $|+\rangle|+\rangle$ and $|1\rangle|1\rangle$. A superposition of several terms is not automatically entangled.`,
     },
     {
       kind: 'widget',
@@ -79,7 +79,7 @@ Measuring at *intermediate* angles gives correlations that no pre-assigned "glov
         'H on q1, then CNOT q1→q0',
       ],
       answers: [0, 4],
-      why: String.raw`Entanglement needs a superposed control *and* a two-qubit gate. H,H gives $|{+}{+}\rangle$ (product). X then CNOT gives $|11\rangle$ (no superposition). Two CNOTs cancel, leaving $|{+}0\rangle$. Option 5 is option 1 with the roles of the qubits swapped.`,
+      why: String.raw`Entanglement needs a superposed control *and* a two-qubit gate. H,H gives $|{+}{+}\rangle$ (product). X then CNOT gives $|11\rangle$ (no superposition). Two CNOTs cancel, leaving $|{+}0\rangle$. "H on q1, then CNOT q1→q0" is the first circuit with the roles of the qubits swapped, so it also entangles.`,
     },
     {
       kind: 'explain',

@@ -155,7 +155,7 @@ Flat regions matter because, as we will see in [backpropagation](@ml/backpropaga
         'Because the theorem only holds for sigmoid activations.',
       ],
       answer: 1,
-      why: String.raw`Depth-separation results (e.g. Telgarsky 2016: a sawtooth with $2^k$ teeth needs $O(k)$ layers of ReLUs but exponentially many units if shallow) show depth buys efficiency. One hidden layer is nonlinear (so A is wrong), and depth does not guarantee fewer parameters.`,
+      why: String.raw`Depth-separation results (e.g. Telgarsky 2016: a sawtooth with $2^k$ teeth needs $O(k)$ layers of ReLUs but exponentially many units if shallow) show depth buys efficiency. One hidden layer is already nonlinear, so it is not limited to linear functions; depth does not guarantee fewer parameters; and universal approximation holds for any non-polynomial activation (Leshno et al. 1993), not just sigmoids.`,
     },
     {
       kind: 'explain',

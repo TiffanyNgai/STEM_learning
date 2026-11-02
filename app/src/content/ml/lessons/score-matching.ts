@@ -155,7 +155,7 @@ exactly the textbook Gaussian conditioning (shrink toward the prior mean).`,
         String.raw`An optimal denoiser at noise level $\sigma$ determines the score of $p_\sigma$.`,
       ],
       answers: [0, 2, 3],
-      why: String.raw`$Z_\theta$ is constant in $\mathbf x$. Hyvärinen's objective is an expectation over **data** only (that is its whole appeal — unlike maximum likelihood for EBMs), so B is false. DSM needs only data plus noise, and Tweedie gives $\nabla\log p_\sigma=(\mathbb E[\mathbf x\mid\tilde{\mathbf x}]-\tilde{\mathbf x})/\sigma^2$.`,
+      why: String.raw`$Z_\theta$ is constant in $\mathbf x$. Hyvärinen's objective is an expectation over **data** only (that is its whole appeal — unlike maximum likelihood for EBMs), so the claim that it needs model samples is false. DSM needs only data plus noise, and Tweedie gives $\nabla\log p_\sigma=(\mathbb E[\mathbf x\mid\tilde{\mathbf x}]-\tilde{\mathbf x})/\sigma^2$.`,
     },
     {
       kind: 'match',

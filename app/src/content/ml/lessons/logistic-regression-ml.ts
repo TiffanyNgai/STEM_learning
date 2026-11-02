@@ -89,7 +89,7 @@ $$\ell(y,p)=-\big[y\log p+(1-y)\log(1-p)\big].$$
         String.raw`$\dfrac{p-y}{p(1-p)}\,\mathbf x$`,
       ],
       answer: 0,
-      why: String.raw`The $\sigma'=p(1-p)$ factor from the chain rule cancels against the $1/p$ and $1/(1-p)$ from the logs. Option 3 is the gradient of **squared error** $\tfrac12(p-y)^2$ through a sigmoid; option 2 has the sign flipped (that is the ascent direction).`,
+      why: String.raw`The $\sigma'=p(1-p)$ factor from the chain rule cancels against the $1/p$ and $1/(1-p)$ from the logs. $(p-y)\,p(1-p)\,\mathbf x$ is the gradient of **squared error** $\tfrac12(p-y)^2$ through a sigmoid; $(y-p)\,\mathbf x$ has the sign flipped (that is the ascent direction).`,
     },
     {
       kind: 'explain',

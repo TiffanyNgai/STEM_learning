@@ -107,7 +107,7 @@ Temperature never changes which class ranks first. Uses: sampling text from lang
         String.raw`$(0.665,\ 0.245,\ 0.090)$`,
       ],
       answer: 0,
-      why: String.raw`$\mathbf p-\mathbf y=(0.665-0,\ 0.245-0,\ 0.090-1)$. A gradient step subtracts this, so it **raises** the true logit and **lowers** the wrong ones in proportion to the probability they stole. Option 2 is the ascent direction; option 3 forgets that wrong classes are pushed down too.`,
+      why: String.raw`$\mathbf p-\mathbf y=(0.665-0,\ 0.245-0,\ 0.090-1)$. A gradient step subtracts this, so it **raises** the true logit and **lowers** the wrong ones in proportion to the probability they stole. $(-0.665,\ -0.245,\ 0.910)$ is the ascent direction; $(0,\ 0,\ -0.910)$ forgets that wrong classes are pushed down too.`,
     },
     {
       kind: 'explain',
