@@ -9,9 +9,9 @@ Naming: users see **AHA!**; technical identifiers that can't hold "!" use lowerc
 the `aha-push` worker, package names). The app was first called Lumen; old `lumen-*` storage keys are
 migrated automatically.
 
-- **Live app:** https://tiffanyngai.github.io/STEM_learning/
+- **Live app:** https://tiffanyngai.github.io/aha/
 - **Push worker:** https://aha-push.tiffanyngai817.workers.dev
-- **Repo:** https://github.com/TiffanyNgai/STEM_learning
+- **Repo:** https://github.com/TiffanyNgai/aha
 
 ```
 app/           Vite + React + TS PWA (the website)
