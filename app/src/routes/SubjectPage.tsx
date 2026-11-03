@@ -14,6 +14,7 @@ export default function SubjectPage() {
   const { id = '' } = useParams();
   const subject = getSubject(id);
   const lessons = useProgress((s) => s.lessons);
+  const resume = useProgress((s) => s.resume);
   const nav = useNavigate();
   const [sheet, setSheet] = useState<{ unit?: Unit; lesson?: LessonMeta; about?: boolean } | null>(null);
   if (!subject) return <><TopBar title="Not found" /><main className="page">Unknown subject. <Link to="/">Home</Link></main></>;
@@ -37,16 +38,22 @@ export default function SubjectPage() {
                 const ref = `${subject.id}/${l.id}` as LessonRef;
                 const ready = isReady(ref);
                 const done = !!lessons[ref];
+                const at = resume[ref];
+                const pct = at && at.total ? Math.round((at.idx / at.total) * 100) : 0;
+                const started = !done && !!at;
                 const isNext = ref === next;
                 const off = OFFSETS[n++ % OFFSETS.length];
-                const cls = ['node', ready ? (done ? 'done' : '') : 'planned', isNext ? 'next' : ''].join(' ');
+                const cls = ['node', ready ? (done ? 'done' : started ? 'started' : '') : 'planned', isNext ? 'next' : ''].join(' ');
+                const status = !ready ? 'Coming soon' : done ? `Completed${lessons[ref].crowns > 1 ? ` ×${lessons[ref].crowns}` : ''}` : started ? `In progress · ${pct}%` : 'Not started';
                 return (
                   <div key={l.id} className="node-wrap" style={{ transform: `translateX(${off}px)` }}>
                     {isNext && <div className="start-bubble">START</div>}
-                    <button className={cls} onClick={() => (ready ? nav(`/lesson/${ref}`) : setSheet({ lesson: l, unit: u }))} aria-label={l.title}>
-                      {ready ? (done ? '👑' : '★') : '🔒'}
+                    <button className={cls} onClick={() => (ready ? nav(`/lesson/${ref}`) : setSheet({ lesson: l, unit: u }))} aria-label={`${l.title} — ${status}`}>
+                      {ready ? (done ? '👑' : started ? '▶' : '★') : '🔒'}
+                      {started && <svg className="node-ring" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="20" pathLength={100} strokeDasharray={`${pct} 100`} /></svg>}
                     </button>
-                    <div className={'node-label' + (ready ? ' ready' : '')}>{l.title}{done && lessons[ref].crowns > 1 ? ` ×${lessons[ref].crowns}` : ''}</div>
+                    <div className={'node-label' + (ready ? ' ready' : '')}>{l.title}</div>
+                    <div className={'node-status' + (done ? ' done' : started ? ' started' : '')}>{status}</div>
                   </div>
                 );
               })}

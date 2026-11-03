@@ -13,11 +13,28 @@ export interface LessonResult { accuracy: number; exercises: number; correctFirs
 
 const PRAISE = ['Nicely done!', 'Correct!', 'Great!', 'Excellent!', 'You got it!', 'Brilliant!'];
 
-export function LessonPlayer({ items, onExit, onFinish }: { items: QueueItem[]; onExit: () => void; onFinish: (r: LessonResult) => void }) {
+/** XP paid out each time a checkpoint is passed, so long lessons reward progress, not just completion. */
+export const CHECKPOINT_XP = 2;
+/** Checkpoints sit at the quarter marks of the lesson. */
+export const checkpointsFor = (n: number) => [1, 2, 3].map((k) => Math.floor((n * k) / 4)).filter((m) => m > 0);
+
+export function LessonPlayer({ items, startIdx = 0, startAwarded = 0, onProgress, onCheckpoint, onExit, onFinish }: {
+  items: QueueItem[];
+  startIdx?: number;
+  startAwarded?: number;
+  onProgress?: (idx: number, total: number, awarded: number) => void;
+  onCheckpoint?: (xp: number) => void;
+  onExit: () => void;
+  onFinish: (r: LessonResult, awarded: number) => void;
+}) {
   const [queue, setQueue] = useState(items);
-  const [idx, setIdx] = useState(0);
+  const [idx, setIdx] = useState(Math.min(startIdx, items.length - 1));
   const [phase, setPhase] = useState<'answer' | 'correct' | 'wrong'>('answer');
   const [ready, setReady] = useState(false);
+  // Remembers how each card was answered, so stepping back shows the result instead of asking again.
+  const [answered, setAnswered] = useState<Record<number, boolean>>({});
+  const [awarded, setAwarded] = useState(startAwarded);
+  const [reward, setReward] = useState<number | null>(null);
   const checkRef = useRef<(() => boolean) | null>(null);
   const stats = useRef({ correctFirstTry: 0, start: Date.now() });
   const { hearts, settings, loseHeart, reviewItem } = useProgress();
@@ -28,21 +45,39 @@ export function LessonPlayer({ items, onExit, onFinish }: { items: QueueItem[]; 
   const isExercise = EXERCISE_KINDS.includes(item.card.kind);
   const exerciseTotal = items.filter((q) => EXERCISE_KINDS.includes(q.card.kind)).length;
   const progress = idx / queue.length;
+  const marks = checkpointsFor(items.length);
 
   const onReady = useCallback((fn: (() => boolean) | null) => { checkRef.current = fn; setReady(!!fn); }, []);
 
+  // Going to a card we already answered shows its verdict again rather than a blank prompt.
+  const goTo = (i: number) => {
+    setIdx(i);
+    setPhase(answered[i] === undefined ? 'answer' : answered[i] ? 'correct' : 'wrong');
+    setReady(false); checkRef.current = null;
+  };
+
   const next = () => {
-    if (idx + 1 >= queue.length) {
+    const to = idx + 1;
+    if (to >= queue.length) {
       const seconds = Math.round((Date.now() - stats.current.start) / 1000);
-      onFinish({ accuracy: exerciseTotal ? stats.current.correctFirstTry / exerciseTotal : 1, exercises: exerciseTotal, correctFirstTry: stats.current.correctFirstTry, seconds });
+      onFinish({ accuracy: exerciseTotal ? stats.current.correctFirstTry / exerciseTotal : 1, exercises: exerciseTotal, correctFirstTry: stats.current.correctFirstTry, seconds }, awarded);
       return;
     }
-    setIdx(idx + 1); setPhase('answer'); setReady(false); checkRef.current = null;
+    const hit = marks.filter((m) => m <= to).length;
+    if (hit > awarded) {
+      const xp = (hit - awarded) * CHECKPOINT_XP;
+      setAwarded(hit); onCheckpoint?.(xp);
+      setReward(xp); if (settings.sound) sfx.correct();
+      setTimeout(() => setReward(null), 1400);
+      onProgress?.(to, items.length, hit);
+    } else onProgress?.(to, items.length, awarded);
+    goTo(to);
   };
 
   const check = () => {
     if (!checkRef.current) return;
     const ok = checkRef.current();
+    setAnswered((a) => ({ ...a, [idx]: ok }));
     if (item.key && !item.retry) reviewItem(item.key, ok);
     if (ok) {
       if (!item.retry) stats.current.correctFirstTry++;
@@ -60,7 +95,10 @@ export function LessonPlayer({ items, onExit, onFinish }: { items: QueueItem[]; 
 
   const primary = () => (isExercise && phase === 'answer' ? check() : next());
   useEffect(() => {
-    const h = (e: KeyboardEvent) => { if (e.key === 'Enter' && (phase !== 'answer' || !isExercise || ready)) { e.preventDefault(); primary(); } };
+    const h = (e: KeyboardEvent) => {
+      if (e.key === 'Enter' && (phase !== 'answer' || !isExercise || ready)) { e.preventDefault(); primary(); }
+      if (e.key === 'ArrowLeft' && idx > 0) { e.preventDefault(); goTo(idx - 1); }
+    };
     window.addEventListener('keydown', h); return () => window.removeEventListener('keydown', h);
   });
 
@@ -79,9 +117,21 @@ export function LessonPlayer({ items, onExit, onFinish }: { items: QueueItem[]; 
     <div className="lesson">
       <div className="lesson-top">
         <button className="icon-btn" onClick={onExit} aria-label="Quit lesson">✕</button>
-        <div className="bar"><i style={{ width: `${Math.max(3, progress * 100)}%` }} /></div>
+        <button className="icon-btn" onClick={() => goTo(idx - 1)} disabled={idx === 0} aria-label="Previous card">←</button>
+        <div className="bar">
+          <i style={{ width: `${Math.max(3, progress * 100)}%` }} />
+          {marks.map((m) => <b key={m} className={'tick' + (m <= idx ? ' hit' : '')} style={{ left: `${(m / queue.length) * 100}%` }} />)}
+        </div>
+        <span className="stat count">{idx + 1}/{queue.length}</span>
         {settings.heartsEnabled && <span className="stat heart">❤️ {Math.min(hearts, MAX_HEARTS)}</span>}
       </div>
+      <AnimatePresence>
+        {reward !== null && (
+          <motion.div className="xp-pop" initial={{ opacity: 0, y: 8, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -10 }}>
+            ⚡ +{reward} XP · checkpoint
+          </motion.div>
+        )}
+      </AnimatePresence>
       <div className="lesson-body">
         <AnimatePresence mode="wait">
           <motion.div key={idx} initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} transition={{ duration: 0.22 }}>
@@ -99,9 +149,12 @@ export function LessonPlayer({ items, onExit, onFinish }: { items: QueueItem[]; 
             <div className="feedback-why"><Rich text={(item.card as Exercise).why} /></div>
           </motion.div>
         )}
-        <button className={'btn' + (phase === 'wrong' ? ' danger' : '')} disabled={isExercise && phase === 'answer' && !ready} onClick={primary}>
-          {isExercise && phase === 'answer' ? 'Check' : 'Continue'}
-        </button>
+        <div className="foot-row">
+          {idx > 0 && <button className="btn secondary back" onClick={() => goTo(idx - 1)}>← Back</button>}
+          <button className={'btn' + (phase === 'wrong' ? ' danger' : '')} disabled={isExercise && phase === 'answer' && !ready} onClick={primary}>
+            {isExercise && phase === 'answer' ? 'Check' : idx + 1 >= queue.length ? 'Finish' : 'Continue'}
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -5,7 +5,7 @@ import { EXERCISE_KINDS, type LessonContent, type LessonRef } from '../content/t
 import { reportActivity } from '../lib/push';
 import { sfx } from '../lib/sfx';
 import { liveStreak, useProgress } from '../store/progress';
-import { LessonPlayer, type LessonResult } from '../components/LessonPlayer';
+import { CHECKPOINT_XP, LessonPlayer, type LessonResult } from '../components/LessonPlayer';
 import { TeachCard } from '../components/TeachCards';
 import { RefList } from '../components/References';
 import { Confetti } from '../components/Confetti';
@@ -41,6 +41,9 @@ export default function LessonPage() {
   const [result, setResult] = useState<{ r: LessonResult; xp: number } | null>(null);
   const [mode, setMode] = useState<'read' | 'play'>(peek ? 'read' : 'play');
   const completeLesson = useProgress((s) => s.completeLesson);
+  // Read once on mount: the player owns the position after that, so later saves must not remount it.
+  const [start] = useState(() => useProgress.getState().resume[ref]);
+  const [restarted, setRestarted] = useState(false);
   useEffect(() => { useProgress.getState().refillHearts(); loadLesson(ref).then((c) => setContent(c ?? null)); }, [ref]);
 
   const back = () => (window.history.length > 1 ? nav(-1) : nav(`/subject/${params.subject}`));
@@ -85,16 +88,31 @@ export default function LessonPage() {
     card: { kind: 'explain', title: '📚 Sources & further reading', body: refsToRich(content.references) },
     key: undefined,
   });
+  const resumeAt = restarted ? 0 : Math.min(start?.idx ?? 0, items.length - 1);
+  const { saveResume, clearResume, addPracticeXp } = useProgress.getState();
   return (
     <div style={{ ['--accent' as any]: loc.subject.color }}>
+      {resumeAt > 0 && (
+        <div className="resume-note">
+          Picking up where you left off, card {resumeAt + 1}.
+          <button onClick={() => { clearResume(ref); setRestarted(true); }}>Start over</button>
+        </div>
+      )}
       <LessonPlayer
+        key={restarted ? 'restart' : 'resume'}
         items={items}
+        startIdx={resumeAt}
+        startAwarded={restarted ? 0 : start?.awarded ?? 0}
+        onProgress={(i, total, awarded) => saveResume(ref, i, total, awarded)}
+        onCheckpoint={(xp) => addPracticeXp(xp)}
         onExit={back}
-        onFinish={(r) => {
-          const xp = 10 + Math.round(r.accuracy * 5) + (r.accuracy >= 0.999 ? 5 : 0);
+        onFinish={(r, awarded) => {
+          const total = 10 + Math.round(r.accuracy * 5) + (r.accuracy >= 0.999 ? 5 : 0);
+          // Checkpoints already paid out part of the lesson's XP.
+          const xp = Math.max(0, total - awarded * CHECKPOINT_XP);
           completeLesson(ref, r.accuracy, xp);
           reportActivity(liveStreak(useProgress.getState()));
-          setResult({ r, xp });
+          setResult({ r, xp: total });
         }}
       />
     </div>

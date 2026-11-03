@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Card } from '../../content/types';
 import { Rich, inline } from '../../lib/Rich';
 import { WidgetHost } from '../WidgetHost';
@@ -104,23 +104,79 @@ function Order({ card, locked, onReady, seed }: ExProps<Extract<Exercise, { kind
     if (s.every((v, i) => v === i)) s = [...s.slice(1), s[0]];
     return s;
   });
+  const listRef = useRef<HTMLDivElement>(null);
+  const [drag, setDrag] = useState<{ pos: number; startY: number; dy: number } | null>(null);
+
+  const apply = (next: number[]) => { setItems(next); onReady(() => next.every((v, k) => v === k)); };
+  const reorder = (from: number, to: number) => {
+    const next = items.slice();
+    next.splice(to, 0, ...next.splice(from, 1));
+    apply(next);
+  };
   const move = (i: number, d: number) => {
     const j = i + d; if (j < 0 || j >= items.length) return;
-    const next = items.slice(); [next[i], next[j]] = [next[j], next[i]]; setItems(next);
-    onReady(() => next.every((v, k) => v === k));
+    reorder(i, j);
+    // keep the keyboard focus on the row that moved
+    requestAnimationFrame(() => (listRef.current?.children[j] as HTMLElement | undefined)?.focus());
   };
+
+  const onDown = (e: React.PointerEvent, pos: number) => {
+    if (locked) return;
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    setDrag({ pos, startY: e.clientY, dy: 0 });
+  };
+  const onMove = (e: React.PointerEvent) => {
+    if (!drag || !listRef.current) return;
+    const rows = Array.from(listRef.current.children) as HTMLElement[];
+    const self = rows[drag.pos].getBoundingClientRect();
+    const dy = e.clientY - drag.startY;
+    const centre = self.top + self.height / 2 + dy;
+    // Swap as soon as the dragged row's centre enters a neighbour, then re-baseline.
+    const target = rows.findIndex((r, i) => {
+      if (i === drag.pos) return false;
+      const b = r.getBoundingClientRect();
+      return centre >= b.top && centre <= b.bottom;
+    });
+    if (target >= 0) { reorder(drag.pos, target); setDrag({ pos: target, startY: e.clientY, dy: 0 }); }
+    else setDrag({ ...drag, dy });
+  };
+  const onUp = () => setDrag(null);
+
   // enable check immediately (current order is an answer)
   useEffect(() => onReady(() => items.every((v, k) => v === k)), []); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <div>
-      <div className="muted" style={{ fontSize: 14, marginBottom: 8 }}>Put the steps in the correct order.</div>
-      {items.map((v, i) => (
-        <div key={v} className="order-item" style={locked ? { borderColor: v === i ? 'var(--green)' : 'var(--red)' } : undefined}>
-          <strong style={{ color: 'var(--muted)' }}>{i + 1}</strong>
-          <Rich text={card.steps[v]} />
-          {!locked && <div className="mv"><button onClick={() => move(i, -1)} aria-label="Move up">▲</button><button onClick={() => move(i, 1)} aria-label="Move down">▼</button></div>}
-        </div>
-      ))}
+      <div className="muted" style={{ fontSize: 14, marginBottom: 8 }}>
+        {locked ? 'Put the steps in the correct order.' : 'Drag the steps into the correct order (or focus one and use ↑ ↓).'}
+      </div>
+      <div ref={listRef}>
+        {items.map((v, i) => (
+          <div
+            key={v}
+            className={'order-item' + (!locked ? ' draggable' : '') + (drag?.pos === i ? ' dragging' : '')}
+            style={{
+              ...(locked ? { borderColor: v === i ? 'var(--green)' : 'var(--red)' } : null),
+              ...(drag?.pos === i ? { transform: `translateY(${drag.dy}px)` } : null),
+            }}
+            tabIndex={locked ? -1 : 0}
+            role={locked ? undefined : 'button'}
+            aria-label={locked ? undefined : `Step in position ${i + 1} of ${items.length}. Use arrow keys to move.`}
+            onPointerDown={(e) => onDown(e, i)}
+            onPointerMove={onMove}
+            onPointerUp={onUp}
+            onPointerCancel={onUp}
+            onKeyDown={(e) => {
+              if (locked) return;
+              if (e.key === 'ArrowUp') { e.preventDefault(); move(i, -1); }
+              if (e.key === 'ArrowDown') { e.preventDefault(); move(i, 1); }
+            }}
+          >
+            <strong style={{ color: 'var(--muted)' }}>{i + 1}</strong>
+            <Rich text={card.steps[v]} />
+            {!locked && <span className="grip" aria-hidden="true">⠿</span>}
+          </div>
+        ))}
+      </div>
       {locked && <div className="muted" style={{ fontSize: 14 }}>Correct order: {card.steps.map((_, i) => i + 1).join(' → ')} as listed in the explanation below.</div>}
     </div>
   );

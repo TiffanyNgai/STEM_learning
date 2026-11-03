@@ -13,6 +13,8 @@ const HEART_REFILL_MS = 30 * 60 * 1000;
 
 export interface LessonRecord { crowns: number; best: number; lastAt: number }
 export interface SrsItem { ease: number; interval: number; due: number; reps: number }
+/** Where the learner stopped in a lesson, so re-entering picks up there. */
+export interface ResumePoint { idx: number; total: number; awarded: number; at: number }
 
 export interface Settings {
   dailyGoal: number;
@@ -33,6 +35,7 @@ interface State {
   hearts: number;
   heartsUpdatedAt: number;
   lessons: Record<string, LessonRecord>;
+  resume: Record<string, ResumePoint>;
   srs: Record<string, SrsItem>;
   settings: Settings;
   seenInstallTip: boolean;
@@ -44,6 +47,8 @@ interface Actions {
   loseHeart: () => void;
   gainHeart: () => void;
   refillHearts: () => void;
+  saveResume: (ref: LessonRef, idx: number, total: number, awarded: number) => void;
+  clearResume: (ref: LessonRef) => void;
   reviewItem: (key: string, correct: boolean) => void;
   updateSettings: (s: Partial<Settings>) => void;
   setSeenInstallTip: () => void;
@@ -57,7 +62,7 @@ const dayDiff = (a: string, b: string) => Math.round((new Date(b).getTime() - ne
 
 const initial: State = {
   xp: 0, streak: 0, bestStreak: 0, lastActiveDay: null, freezes: 1, xpByDay: {},
-  hearts: MAX_HEARTS, heartsUpdatedAt: Date.now(), lessons: {}, srs: {},
+  hearts: MAX_HEARTS, heartsUpdatedAt: Date.now(), lessons: {}, resume: {}, srs: {},
   settings: { dailyGoal: 30, reminderHour: 19, pushEnabled: false, heartsEnabled: true, sound: true, theme: 'system' },
   seenInstallTip: false,
 };
@@ -88,7 +93,8 @@ export const useProgress = create<State & Actions>()(
       completeLesson: (ref, accuracy, xp) => set((s) => {
         const prev = s.lessons[ref];
         const rec: LessonRecord = { crowns: Math.min(5, (prev?.crowns ?? 0) + 1), best: Math.max(prev?.best ?? 0, accuracy), lastAt: Date.now() };
-        return { ...addXp(s, xp), lessons: { ...s.lessons, [ref]: rec } };
+        const { [ref]: _done, ...resume } = s.resume;
+        return { ...addXp(s, xp), lessons: { ...s.lessons, [ref]: rec }, resume };
       }),
       addPracticeXp: (xp) => set((s) => addXp(s, xp)),
       loseHeart: () => set((s) => s.settings.heartsEnabled ? { hearts: Math.max(0, s.hearts - 1), heartsUpdatedAt: s.hearts === MAX_HEARTS ? Date.now() : s.heartsUpdatedAt } : {}),
@@ -99,6 +105,8 @@ export const useProgress = create<State & Actions>()(
         const n = Math.floor((Date.now() - s.heartsUpdatedAt) / HEART_REFILL_MS);
         if (n > 0) set({ hearts: Math.min(MAX_HEARTS, s.hearts + n), heartsUpdatedAt: s.heartsUpdatedAt + n * HEART_REFILL_MS });
       },
+      saveResume: (ref, idx, total, awarded) => set((s) => ({ resume: { ...s.resume, [ref]: { idx, total, awarded, at: Date.now() } } })),
+      clearResume: (ref) => set((s) => { const { [ref]: _, ...rest } = s.resume; return { resume: rest }; }),
       reviewItem: (key, correct) => set((s) => {
         // SM-2-lite
         const it = s.srs[key] ?? { ease: 2.5, interval: 0, due: 0, reps: 0 };
@@ -120,7 +128,7 @@ export const useProgress = create<State & Actions>()(
           const data = JSON.parse(json);
           const st = data.state ?? data;
           if (typeof st.xp !== 'number' || typeof st.lessons !== 'object') return false;
-          set({ ...initial, ...st, settings: { ...initial.settings, ...st.settings } });
+          set({ ...initial, ...st, resume: st.resume ?? {}, settings: { ...initial.settings, ...st.settings } });
           return true;
         } catch { return false; }
       },
@@ -128,7 +136,9 @@ export const useProgress = create<State & Actions>()(
     }),
     {
       name: 'aha-progress',
-      version: 1,
+      version: 2,
+      // v2 added `resume`; older saves simply have no saved positions.
+      migrate: (s: any) => ({ ...s, resume: s?.resume ?? {} }),
       storage: createJSONStorage(() => {
         try { localStorage.setItem('__t', '1'); localStorage.removeItem('__t'); return localStorage; }
         catch { const m = new Map<string, string>(); return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => void m.set(k, v), removeItem: (k) => void m.delete(k) }; }
